@@ -1,0 +1,12 @@
+[
+    {
+        "name": "Иван",
+        "password_hash": "47ecfe26fe16b6a3f87898816c55d88003ad17beba2655e4c71c3ba68d319feb1c0a657f32ef8c62f057fa5de2f6817e",
+        "access_level": "admin"
+    },
+    {
+        "name": "Мария",
+        "password_hash": "6c9ea0331ecba5cf8e4be06a1fdb7a4733f0769d517404f558ea5152e4147673395c13e3863edd4b0e907c5219dbbb6d6",
+        "access_level": "user"
+    }
+]
