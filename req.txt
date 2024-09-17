@@ -2,3 +2,22 @@ python_telegram_bot==21.5
 python_dotenv==1.0.1
 pycryptodome==3.20.0
 requests==2.32.3
+aiohttp==3.10.5
+
+import json
+import logging
+import os
+import asyncio
+from datetime import datetime, timedelta
+import aiohttp  # Импортируем aiohttp
+from dotenv import load_dotenv
+from telegram import ForceReply, Update, InlineKeyboardButton, InlineKeyboardMarkup
+from telegram.ext import (
+    ApplicationBuilder,
+    CommandHandler,
+    ContextTypes,
+    MessageHandler,
+    filters,
+    ConversationHandler,
+    CallbackQueryHandler,
+)

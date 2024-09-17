@@ -3,14 +3,14 @@ const cors = require("cors");
 const bodyParser = require('body-parser');
 const morgan = require('morgan'); // Импортируем morgan
 require('dotenv').config(); // Для загрузки переменных окружения 
-const nano = require('nano');
+const axios = require('axios');
 
 USERNAME = process.env.COUCH_BD_USER;
 PASSWORD = process.env.COUCH_BD_PASSWORD;
-
+DB_NAME = process.env.COUCH_BD_NAME;
 // Подключение к CouchDB
-const couch = nano(`http://${USERNAME}:${PASSWORD}@localhost:5984`);
-const db = couch.db.use('work');
+const COUCHDB_URL = `http://${USERNAME}:${PASSWORD}@localhost:5984/`;
+console.log(COUCHDB_URL);
 
 const app = express();
 app.use(cors());
@@ -26,20 +26,32 @@ function getCurrentTimestamp() {
 // Middleware для парсинга JSON
 app.use(bodyParser.json());
 
-// Эндпоинт для проверки пароля
 app.post('/login', async (req, res) => {
     const { password } = req.body;
     console.log(req.body);
 
     try {
-        const employee = await db.view('design_doc', 'view_name', { key: password });
+        // URL для получения документа
+        const couchdb_url = `${COUCHDB_URL}/${DB_NAME}/_all_docs?include_docs=true`;
 
-        if (employee.rows.length > 0) {
-            res.status(200).json(employee.rows[0].value);
+        // Запрос на получение всех документов
+        const response = await axios.get(couchdb_url);
+
+        // Проверка полученных данных
+        const employees = response.data.rows;
+
+        // Поиск соответствия пароля
+        const employee = employees.find(row => row.doc.password === password);
+
+        if (employee) {
+            console.log(employee.doc);
+
+            res.status(200).json(employee.doc);
         } else {
             res.status(401).json({ message: 'Неверный пароль' });
         }
     } catch (error) {
+        console.error('Ошибка при получении данных из CouchDB:', error.message);
         res.status(500).json({ message: 'Ошибка сервера', error });
     }
 });
